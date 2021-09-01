@@ -1,0 +1,23 @@
+---
+- name: Install PHP-CLI
+  apt:
+    name:
+      - "php{{ php_version }}-cli"
+  tags: php-cli.install
+
+- name: Install PHP modules
+  apt:
+    name: "php{{ php_version }}-{{ item }}"
+  with_items: "{{ php_modules }}"
+  tags: php-cli.install
+
+- name: Set PHP options for CLI
+  ini_file:
+    path: /etc/php/{{ php_version }}/cli/php.ini
+    section: "{{ item.section | default('PHP') }}"
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+    state: "{{ item.state | default('present') }}"
+  with_items: "{{ php_cli_ini_options }}"
+  tags: php-cli.options
+...
